@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 26 11:32:19 2018
+
+@author: shubham
+"""
+    
+from PyQt5.QtWidgets import (QApplication, QDialog,
+        QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
+        QLabel, QLineEdit, QMenu, QTextEdit,
+        QVBoxLayout)
+import sys
+ 
+class Dialog(QDialog):
+    NumGridRows = 3
+    NumButtons = 4
+    def __init__(self):
+        super(Dialog, self).__init__()
+#        self.Voltage_input_max, self.Voltage_input_min='2','3'
+        self.createFormGroupBox()
+ 
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox.accepted.connect(self.evaluate_values)
+        self.buttonBox.rejected.connect(self.reject)
+ 
+        
+    
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(self.formGroupBox)
+        mainLayout.addWidget(self.buttonBox)
+        self.setLayout(mainLayout)
+ 
+        self.setWindowTitle("Development of an Intelligent Software to Design Power Electronic Converter")
+ 
+    def createFormGroupBox(self):
+        self.formGroupBox = QGroupBox("Enter Required Details")
+        layout = QFormLayout()
+        self.Voltage_input_max =QLineEdit()
+        self.Voltage_input_min = QLineEdit()
+        layout.addRow(QLabel("Maximum input voltage, VIN,MAX (Volt):"), self.Voltage_input_max)
+        layout.addRow(QLabel("Minimum input voltage, VIN,MIN  (Volt):"),self.Voltage_input_min)
+        layout.addRow(QLabel("Minimum input voltage, VIN,MIN  (Volt):"), QLineEdit())
+        layout.addRow(QLabel("Output voltage, VOUT  (Volt):"), QLineEdit())
+        layout.addRow(QLabel("Output current, IOUT (Ampere):"), QLineEdit())
+        layout.addRow(QLabel("Switching frequency, fS (Hertz):"), QLineEdit())
+        self.formGroupBox.setLayout(layout)
+ 
+    def evaluate_values(self):
+        #textboxvalue = self.Voltage_input_max.text()
+        #print(textboxvalue)
+        print(int(self.Voltage_input_max.text())+3)
+        print(self.Voltage_input_min.text())
+ 
+    
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    dialog = Dialog()
+sys.exit(dialog.exec_())

@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 26 11:32:19 2018
+
+@author: shubham
+"""
+    
+from PyQt5.QtWidgets import (QApplication, QDialog,
+        QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
+        QLabel, QLineEdit, QMenu, QTextEdit,
+        QVBoxLayout)
+import sys
+#Library to read csv file
+import pandas as pd
+#Numpy Array
+import numpy as np
+
+#%% 
+class Dialog(QDialog):
+    
+    NumGridRows = 3
+    NumButtons = 4
+    def __init__(self):
+        super(Dialog, self).__init__()
+#        global Component_file_name
+        self.Component_file_name=['Capacitor_Specification','Diode_Specification','IGBT_Specification','MOSFET_Specfication','Inductor_Specification']
+        self.number_of_component=5
+        self.createFormGroupBox()
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)      
+        self.buttonBox.accepted.connect(self.evaluate_values)
+        self.buttonBox.rejected.connect(self.reject)
+        
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(self.formGroupBox)
+        mainLayout.addWidget(self.buttonBox)
+        self.setLayout(mainLayout)
+ 
+        self.setWindowTitle("Development of an Intelligent Software to Design Power Electronic Converter")
+ 
+    def createFormGroupBox(self):
+        self.formGroupBox = QGroupBox("Enter Required Details")
+        layout = QFormLayout()
+        self.Voltage_input_max =QLineEdit()
+        self.Voltage_input_min = QLineEdit()
+        self.Voltage_out=QLineEdit()
+        self.Current_out=QLineEdit()
+        self.Switching_frequency=QLineEdit()
+        layout.addRow(QLabel("Maximum input voltage, VIN,MAX (Volt):"), self.Voltage_input_max)
+        layout.addRow(QLabel("Minimum input voltage, VIN,MIN  (Volt):"),self.Voltage_input_min)
+        layout.addRow(QLabel("Output voltage, VOUT  (Volt):"), self.Voltage_out)
+        layout.addRow(QLabel("Output current, IOUT (Ampere):"), self.Current_out)
+        layout.addRow(QLabel("Switching frequency, fS (Hertz):"), self.Switching_frequency)
+        self.formGroupBox.setLayout(layout)
+ 
+    def evaluate_values(self):
+#        Maximum Input Voltage
+        V_in_max=int(self.Voltage_input_max.text())
+#        Minimum Input Voltage        
+        V_in_min=int(self.Voltage_input_min.text())
+#        Output Voltage
+        V_out=int(self.Voltage_out.text())
+#        Output Current
+        I_out=int(self.Current_out.text())
+#        Switching Frequency
+        Fs=int(self.Switching_frequency.text())
+        Ts=1/Fs
+#        del_I_L
+        Inductor_current_ripple=30*I_out/100
+#        del_V_o
+        Output_voltage_ripple=V_out/100
+#        Duty Cycle
+        D=V_out/V_in_max
+#        Inductor Value
+        L=((V_in_max-V_out)*D*Ts)/Inductor_current_ripple
+#        Capacitor Value
+        C=(Inductor_current_ripple*Ts)/(8*Output_voltage_ripple)
+        Drain_source_Voltage=V_in_max*2
+        Continuous_drain_current=I_out*D*1.5
+        Forward_current=I_out*(1-D)*1.5
+        Irms=(((I_out)**2)+(((Inductor_current_ripple)**2)/12))**(0.5)
+#        Dialog.search_component(self.Component_file_name[0])
+        Dialog.capicator_specification(self.Component_file_name[0])
+        Dialog.diode_specification(self.Component_file_name[1])
+#        Dialog.igbt_specification(self.Component_file_name[2])/Dialog.mosfet_specification(self.Component_file_name[3])
+        Dialog.inductor_specification(self.Component_file_name[4])
+        
+            
+    def capicator_specification(file_name):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+    
+    def diode_specification(file_name):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+    
+    def igbt_specification(file_name):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+    
+    def mosfet_specification(file_name):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+        
+    def inductor_specification(file_name):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+
+    
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    dialog = Dialog()
+sys.exit(dialog.exec_())
