@@ -10,13 +10,35 @@ import pandas as pd
 #Numpy Array
 import numpy as np
 
-Capacitor_voltage=10
-C=0.005
-data_file=pd.read_csv('Capacitor_Specification'+'.csv')
+Drain_source_Voltage=10
+Continuous_drain_current=100
+data_file=pd.read_csv('MOSFET_Specification'+'.csv')
 data=np.array(data_file)
 size=data.shape
 selected=[]
 
+for i in range(0,size[0]):
+    temp_id=data[i][4]
+    temp_id=temp_id.replace(" ","")
+    temp_vds=data[i][5]
+    temp_vds=temp_vds.replace(" ","")
+    if temp_id!=' -' and temp_vds!=' -':
+        if temp_id[-2:]=='mA':
+            temp_id=float(temp_id[:-2])
+            temp_id=temp_id/1000
+        elif temp_id[-1:]=='A':
+            temp_id=float(temp_id[:-1])
+        if temp_vds[-2:]=='mV':
+            temp_vds=float(temp_id[:-2])
+            temp_vds=temp_vds/1000
+        elif temp_vds[-1:]=='V':
+            temp_vds=float(temp_vds[:-1])
+        if temp_id>=Continuous_drain_current and temp_vds>=Drain_source_Voltage:
+            selected.append(i)
+            break
+print("Selected MOSFET is "+str(data[selected[0]][1]))
+    
+#%%
 for i in range(0,size[0]):
     temp_c=data[i][3]
     temp_c=temp_c.replace(" ","")

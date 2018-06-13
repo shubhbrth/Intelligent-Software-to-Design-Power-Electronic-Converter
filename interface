@@ -24,7 +24,7 @@ class Dialog(QDialog):
     def __init__(self):
         super(Dialog, self).__init__()
 #        global Component_file_name
-        self.Component_file_name=['Capacitor_Specification','Diode_Specification','IGBT_Specification','MOSFET_Specfication','Inductor_Specification']
+        self.Component_file_name=['Capacitor_Specification','Diode_Specification','IGBT_Specification','MOSFET_Specification','Inductor_Specification']
         self.number_of_component=5
         self.createFormGroupBox()
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)      
@@ -85,9 +85,9 @@ class Dialog(QDialog):
         Dialog.capicator_specification(self.Component_file_name[0],Capacitor_voltage,C)
         Dialog.diode_specification(self.Component_file_name[1],Forward_current)  #use forward current
         if Drain_source_Voltage>=250:
-            Dialog.igbt_specification(self.Component_file_name[2],Continuous_drain_current)
+            Dialog.igbt_specification(self.Component_file_name[2],Continuous_drain_current,Drain_source_Voltage)
         else:
-            Dialog.mosfet_specification(self.Component_file_name[3],Drain_source_Voltage)
+            Dialog.mosfet_specification(self.Component_file_name[3],Continuous_drain_current,Drain_source_Voltage)
         
         Dialog.inductor_specification(self.Component_file_name[4],L,Irms)
         
@@ -161,17 +161,58 @@ class Dialog(QDialog):
         print('Selected Diode is '+str(data[select_comp_index][1]))
             
     
-    def igbt_specification(file_name,Continuous_drain_current):
+    def igbt_specification(file_name,Continuous_drain_current,Drain_source_Voltage):
         data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
         size=data.shape
-        print("diode")
-    
-    def mosfet_specification(file_name,Drain_source_Voltage):
+        selected=[]
+        for i in range(0,size[0]):
+            temp_id=data[i][4]
+            temp_id=temp_id.replace(" ","")
+            temp_vds=data[i][5]
+            temp_vds=temp_vds.replace(" ","")
+            if temp_id!=' -' and temp_vds!=' -':
+                if temp_id[-2:]=='mA':
+                    temp_id=float(temp_id[:-2])
+                    temp_id=temp_id/1000
+                elif temp_id[-1:]=='A':
+                    temp_id=float(temp_id[:-1])
+                if temp_vds[-2:]=='mV':
+                    temp_vds=float(temp_id[:-2])
+                    temp_vds=temp_vds/1000
+                elif temp_vds[-1:]=='V':
+                    temp_vds=float(temp_vds[:-1])
+                if temp_id>=Continuous_drain_current and temp_vds>=Drain_source_Voltage:
+                    selected.append(i)
+                    break
+        print("Selected IGBT is "+str(data[selected[0]][1]))
+        
+
+    def mosfet_specification(file_name,Continuous_drain_current,Drain_source_Voltage):
         data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
         size=data.shape
-        print("mosfet")
+        selected=[]
+        for i in range(0,size[0]):
+            temp_id=data[i][4]
+            temp_id=temp_id.replace(" ","")
+            temp_vds=data[i][5]
+            temp_vds=temp_vds.replace(" ","")
+            if temp_id!=' -' and temp_vds!=' -':
+                if temp_id[-2:]=='mA':
+                    temp_id=float(temp_id[:-2])
+                    temp_id=temp_id/1000
+                elif temp_id[-1:]=='A':
+                    temp_id=float(temp_id[:-1])
+                if temp_vds[-2:]=='mV':
+                    temp_vds=float(temp_id[:-2])
+                    temp_vds=temp_vds/1000
+                elif temp_vds[-1:]=='V':
+                    temp_vds=float(temp_vds[:-1])
+                if temp_id>=Continuous_drain_current and temp_vds>=Drain_source_Voltage:
+                    selected.append(i)
+                    break
+        print("Selected MOSFET is "+str(data[selected[0]][1]))
         
     def inductor_specification(file_name,L,Irms):
         data_file=pd.read_csv(file_name+'.csv')
