@@ -82,15 +82,18 @@ class Dialog(QDialog):
         Capacitor_voltage=(V_out+(Output_voltage_ripple)/2)*2
 #        Dialog.search_component(self.Component_file_name[0])
         
-        Dialog.capicator_specification(self.Component_file_name[0],Capacitor_voltage,C)
-        Dialog.diode_specification(self.Component_file_name[1],Forward_current)  #use forward current
+        Capacitor=Dialog.capicator_specification(self.Component_file_name[0],Capacitor_voltage,C)
+        Diode=Dialog.diode_specification(self.Component_file_name[1],Forward_current)  #use forward current
+        Inductor=Dialog.inductor_specification(self.Component_file_name[4],L,Irms)
         if Drain_source_Voltage>=250:
-            Dialog.igbt_specification(self.Component_file_name[2],Continuous_drain_current,Drain_source_Voltage)
+            Igbt=Dialog.igbt_specification(self.Component_file_name[2],Continuous_drain_current,Drain_source_Voltage)
+            Igbt_Mosfet=Igbt
+            QMessageBox.about(self, "Components Found","Selected Capacitor is"+Capacitor+"\nSelected Diode is "+Diode+"\nSelected Inductor is "+Inductor+"\nSelected Igbt is "+Igbt_Mosfet)
         else:
-            Dialog.mosfet_specification(self.Component_file_name[3],Continuous_drain_current,Drain_source_Voltage)
-        
-        Dialog.inductor_specification(self.Component_file_name[4],L,Irms)
-        
+            Mosfet=Dialog.mosfet_specification(self.Component_file_name[3],Continuous_drain_current,Drain_source_Voltage)
+            Igbt_Mosfet=Mosfet
+            QMessageBox.about(self, "Components Found","Selected Capacitor is"+Capacitor+"\nSelected Diode is "+Diode+"\nSelected Inductor is "+Inductor+"\nSelected Igbt is "+Igbt_Mosfet)
+#        dialog.message_box1(Capacitor,Diode,Igbt_Mosfet,Inductor)
         
             
     def capicator_specification(file_name,Capacitor_voltage,C):
@@ -120,6 +123,7 @@ class Dialog(QDialog):
                     selected.append(i)
                     break
         print("Selected Capacitor is "+str(data[selected[0]][1]))
+        return str(data[selected[0]][1])
         
     
     def diode_specification(file_name,Forward_current):
@@ -160,6 +164,7 @@ class Dialog(QDialog):
                     temp=temp_selected
                     select_comp_index=selected[i-1]
         print('Selected Diode is '+str(data[select_comp_index][1]))
+        return str(data[select_comp_index][1])
             
     
     def igbt_specification(file_name,Continuous_drain_current,Drain_source_Voltage):
@@ -187,6 +192,7 @@ class Dialog(QDialog):
                     selected.append(i)
                     break
         print("Selected IGBT is "+str(data[selected[0]][1]))
+        return str(data[selected[0]][1])
         
 
     def mosfet_specification(file_name,Continuous_drain_current,Drain_source_Voltage):
@@ -214,6 +220,8 @@ class Dialog(QDialog):
                     selected.append(i)
                     break
         print("Selected MOSFET is "+str(data[selected[0]][1]))
+        return str(data[selected[0]][1])
+
         
     def inductor_specification(file_name,L,Irms):
         data_file=pd.read_csv(file_name+'.csv')
@@ -250,8 +258,9 @@ class Dialog(QDialog):
                     selected.append(i)
                     break
         print("Selected Inductor is "+str(data[selected[0]][1]))
+        return str(data[selected[0]][1])
 
-    
+        
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     dialog = Dialog()
