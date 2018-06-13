@@ -88,11 +88,11 @@ class Dialog(QDialog):
         if Drain_source_Voltage>=250:
             Igbt=Dialog.igbt_specification(self.Component_file_name[2],Continuous_drain_current,Drain_source_Voltage)
             Igbt_Mosfet=Igbt
-            QMessageBox.about(self, "Components Found","Selected Capacitor is"+Capacitor+"\nSelected Diode is "+Diode+"\nSelected Inductor is "+Inductor+"\nSelected Igbt is "+Igbt_Mosfet)
+            QMessageBox.about(self, "Components Selected","Selected Capacitor is"+Capacitor+"\nSelected Diode is "+Diode+"\nSelected Inductor is "+Inductor+"\nSelected IGBT is "+Igbt_Mosfet)
         else:
             Mosfet=Dialog.mosfet_specification(self.Component_file_name[3],Continuous_drain_current,Drain_source_Voltage)
             Igbt_Mosfet=Mosfet
-            QMessageBox.about(self, "Components Found","Selected Capacitor is"+Capacitor+"\nSelected Diode is "+Diode+"\nSelected Inductor is "+Inductor+"\nSelected Igbt is "+Igbt_Mosfet)
+            QMessageBox.about(self, "Components Selected","Selected Capacitor is"+Capacitor+"\nSelected Diode is "+Diode+"\nSelected Inductor is "+Inductor+"\nSelected Mosfet is "+Igbt_Mosfet)
 #        dialog.message_box1(Capacitor,Diode,Igbt_Mosfet,Inductor)
         
             
