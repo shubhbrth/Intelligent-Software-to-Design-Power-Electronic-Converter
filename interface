@@ -79,32 +79,83 @@ class Dialog(QDialog):
         Continuous_drain_current=I_out*D*1.5
         Forward_current=I_out*(1-D)*1.5
         Irms=(((I_out)**2)+(((Inductor_current_ripple)**2)/12))**(0.5)
+        Capacitor_voltage=(V_out+(Output_voltage_ripple)/2)*2
 #        Dialog.search_component(self.Component_file_name[0])
-        Dialog.capicator_specification(self.Component_file_name[0])
-        Dialog.diode_specification(self.Component_file_name[1])
-#        Dialog.igbt_specification(self.Component_file_name[2])/Dialog.mosfet_specification(self.Component_file_name[3])
-        Dialog.inductor_specification(self.Component_file_name[4])
+        
+        Dialog.capicator_specification(self.Component_file_name[0],Capacitor_voltage,C)
+        Dialog.diode_specification(self.Component_file_name[1],Forward_current)  #use forward current
+        if Drain_source_Voltage>=250:
+            Dialog.igbt_specification(self.Component_file_name[2],Continuous_drain_current)
+        else:
+            Dialog.mosfet_specification(self.Component_file_name[3],Drain_source_Voltage)
+        
+        Dialog.inductor_specification(self.Component_file_name[4],L,Irms)
         
             
-    def capicator_specification(file_name):
+    def capicator_specification(file_name,Capacitor_voltage,C):
         data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
-    
-    def diode_specification(file_name):
-        data_file=pd.read_csv(file_name+'.csv')
-        data=np.array(data_file)
-    
-    def igbt_specification(file_name):
-        data_file=pd.read_csv(file_name+'.csv')
-        data=np.array(data_file)
-    
-    def mosfet_specification(file_name):
-        data_file=pd.read_csv(file_name+'.csv')
-        data=np.array(data_file)
+        size=data.shape
+        print("capacitor")
         
-    def inductor_specification(file_name):
+    
+    def diode_specification(file_name,Forward_current):
+        data_file=pd.read_csv('Diode_Specification'+'.csv')
+        data=np.array(data_file)
+        size=data.shape
+        selected=[]
+        for i in range(0,size[0]):
+            temp_value=data[i][3]
+            temp_value.replace(" ","")
+            if temp_value!=' -':
+                if temp_value[-2:]=='mA':
+                    value=float(temp_value[:-2])
+                    value=value/1000
+                else:
+                    value=float(temp_value[:-1])
+                if Forward_current<=value:
+                    selected.append(i) 
+
+        temp=data[selected[0]][4]
+        temp.replace(" ","")
+        if temp[-2:]=='mV':
+            temp=float(temp[:-2])
+            temp=temp/1000
+        else :
+            temp=float(temp[:-1])
+        select_comp_index=selected[0]
+        for i in range(1,len(selected)):    
+            temp_selected=data[selected[i-1]][4]
+            temp_selected.replace(" ","")
+            if temp_selected!=' -':
+                if temp_selected[-2:]=='mV':
+                    temp_selected=float(temp_selected[:-2])
+                    temp_selected=temp_selected/1000
+                else:
+                    temp_selected=float(temp_selected[:-1])
+                if temp>temp_selected:
+                    temp=temp_selected
+                    select_comp_index=selected[i-1]
+        print('Selected Diode is '+str(data[select_comp_index][1]))
+            
+    
+    def igbt_specification(file_name,Continuous_drain_current):
         data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
+        size=data.shape
+        print("diode")
+    
+    def mosfet_specification(file_name,Drain_source_Voltage):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+        size=data.shape
+        print("mosfet")
+        
+    def inductor_specification(file_name,L,Irms):
+        data_file=pd.read_csv(file_name+'.csv')
+        data=np.array(data_file)
+        size=data.shape
+        print("inductor")
 
     
 if __name__ == '__main__':
