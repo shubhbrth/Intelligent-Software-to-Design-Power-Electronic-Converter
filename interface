@@ -9,7 +9,7 @@ Created on Sat May 26 11:32:19 2018
 from PyQt5.QtWidgets import (QApplication, QDialog,
         QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
         QLabel, QLineEdit, QMenu, QTextEdit,
-        QVBoxLayout)
+        QVBoxLayout,QMessageBox)
 import sys
 #Library to read csv file
 import pandas as pd
@@ -91,6 +91,7 @@ class Dialog(QDialog):
         
         Dialog.inductor_specification(self.Component_file_name[4],L,Irms)
         
+        
             
     def capicator_specification(file_name,Capacitor_voltage,C):
         data_file=pd.read_csv(file_name+'.csv')
@@ -115,10 +116,10 @@ class Dialog(QDialog):
                 elif temp_v[-2]=='mV':
                     temp_v=float(temp_v[:-2])
                     temp_v=temp_v/1000
-                if temp_c>=C and temp_v>=Capacitor_voltage:
+                if temp_c>=int(C) and temp_v>=int(Capacitor_voltage):
                     selected.append(i)
                     break
-        print("Selected Conductor is "+str(data[selected[0]][1]))
+        print("Selected Capacitor is "+str(data[selected[0]][1]))
         
     
     def diode_specification(file_name,Forward_current):
@@ -167,9 +168,9 @@ class Dialog(QDialog):
         size=data.shape
         selected=[]
         for i in range(0,size[0]):
-            temp_id=data[i][4]
+            temp_id=data[i][3]
             temp_id=temp_id.replace(" ","")
-            temp_vds=data[i][5]
+            temp_vds=data[i][4]
             temp_vds=temp_vds.replace(" ","")
             if temp_id!=' -' and temp_vds!=' -':
                 if temp_id[-2:]=='mA':
