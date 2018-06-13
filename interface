@@ -96,11 +96,33 @@ class Dialog(QDialog):
         data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
         size=data.shape
-        print("capacitor")
+        selected=[]
+
+        for i in range(0,size[0]):
+            temp_c=data[i][3]
+            temp_c=temp_c.replace(" ","")
+            temp_v=data[i][4]
+            temp_v=temp_v.replace(" ","")
+            if temp_c!=' -' and temp_v!=' -':
+                if temp_c[-3:]=='ÂµF':
+                    temp_c=float(temp_c[:-3])
+                    temp_c=temp_c/1000000
+                elif temp_c[-2]=='µF':
+                    temp_c=float(temp_c[:-2])
+                    temp_c=temp_c/1000000
+                if temp_v[-1:]=='V':
+                    temp_v=float(temp_v[:-1])
+                elif temp_v[-2]=='mV':
+                    temp_v=float(temp_v[:-2])
+                    temp_v=temp_v/1000
+                if temp_c>=C and temp_v>=Capacitor_voltage:
+                    selected.append(i)
+                    break
+        print("Selected Conductor is "+str(data[selected[0]][1]))
         
     
     def diode_specification(file_name,Forward_current):
-        data_file=pd.read_csv('Diode_Specification'+'.csv')
+        data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
         size=data.shape
         selected=[]
@@ -152,7 +174,7 @@ class Dialog(QDialog):
         print("mosfet")
         
     def inductor_specification(file_name,L,Irms):
-        data_file=pd.read_csv('Inductor_Specification'+'.csv')
+        data_file=pd.read_csv(file_name+'.csv')
         data=np.array(data_file)
         size=data.shape
         selected=[]

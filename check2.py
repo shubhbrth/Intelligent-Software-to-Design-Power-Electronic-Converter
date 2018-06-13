@@ -10,43 +10,38 @@ import pandas as pd
 #Numpy Array
 import numpy as np
 
-L=0.0001
-Irms=1
-data_file=pd.read_csv('Inductor_Specification'+'.csv')
+Capacitor_voltage=10
+C=0.005
+data_file=pd.read_csv('Capacitor_Specification'+'.csv')
 data=np.array(data_file)
 size=data.shape
 selected=[]
 
 for i in range(0,size[0]):
-    temp_inductance=data[i][3]
-    temp_irms=data[i][4]
-    temp_inductance=temp_inductance.replace(" ","")
-    temp_irms=temp_irms.replace(" ","")
-    if temp_irms!=' -' and temp_inductance!=' -':
-        if temp_inductance[-3:]=="ÂµH":
-            temp_inductance=float(temp_inductance[:-3])
-            temp_inductance=temp_inductance/1000000
-        elif temp_inductance[-2:]=="µH":
-            temp_inductance=float(temp_inductance[:-2])
-            temp_inductance=temp_inductance/1000000
-        elif temp_inductance[-2:]=="mH":
-            temp_inductance=float(temp_inductance[:-2])
-            temp_inductance=temp_inductance/1000
-        elif temp_inductance[-2:]=="nH":
-            temp_inductance=float(temp_inductance[:-2])
-            temp_inductance=temp_inductance/1000000000
-        elif temp_inductance[-2:]=="pH":
-            temp_inductance=float(temp_inductance[:-2])
-            temp_inductance=temp_inductance/1000000000000
-        if temp_irms[-2:]=="mA":
-            temp_irms=float(temp_irms[:-2])
-            temp_irms=temp_irms/1000
-        else:
-            temp_irms=float(temp_irms[:-1])
-        if temp_inductance>=int(L) and temp_irms>=int(Irms):
+    temp_c=data[i][3]
+    temp_c=temp_c.replace(" ","")
+    temp_v=data[i][4]
+    temp_v=temp_v.replace(" ","")
+    if temp_c!=' -' and temp_v!=' -':
+        if temp_c[-3:]=='ÂµF':
+            temp_c=float(temp_c[:-3])
+            temp_c=temp_c/1000000
+        elif temp_c[-2]=='µF':
+            temp_c=float(temp_c[:-2])
+            temp_c=temp_c/1000000
+        if temp_v[-1:]=='V':
+            temp_v=float(temp_v[:-1])
+        elif temp_v[-2]=='mV':
+            temp_v=float(temp_v[:-2])
+            temp_v=temp_v/1000
+        if temp_c>=C and temp_v>=Capacitor_voltage:
             selected.append(i)
             break
-print("Selected inductor is"+str(data[selected[0]][1]))
+print("Selected Conductor is "+str(data[selected[0]][1]))
+        
+    
+
+        
 #%%
 data_file=pd.read_csv('Diode_Specification'+'.csv')
 data=np.array(data_file)
