@@ -114,12 +114,14 @@ class Dialog(QDialog):
                 elif temp_c[-2]=='µF':
                     temp_c=float(temp_c[:-2])
                     temp_c=temp_c/1000000
+                elif temp_c[-1]=='F' :
+                    temp_c=float(temp_c[:-1])
                 if temp_v[-1:]=='V':
                     temp_v=float(temp_v[:-1])
                 elif temp_v[-2]=='mV':
                     temp_v=float(temp_v[:-2])
                     temp_v=temp_v/1000
-                if temp_c>=int(C) and temp_v>=int(Capacitor_voltage):
+                if float(temp_c)>=float(C) and float(temp_v)>=float(Capacitor_voltage):
                     selected.append(i)
                     break
         print("Selected Capacitor is "+str(data[selected[0]][1]))
